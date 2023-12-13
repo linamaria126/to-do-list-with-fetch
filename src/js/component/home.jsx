@@ -1,26 +1,93 @@
-import React from "react";
+import React, { useState } from "react";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
+const initialState = {
+  label: "",
+  done: false,
+};
 
 //create your first component
 const Home = () => {
-	return (
-		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
-		</div>
-	);
+  const [task, setTask] = useState(initialState);
+  const [lisTasks, setLisTasks] = useState([]);
+
+  // functions
+  function handleChange(event) {
+    setTask({
+      ...task,
+      label: event.target.value,
+    });
+  }
+
+  function saveTask(event) {
+    if (event.key == "Enter") {
+      setLisTasks([...lisTasks, task]);
+      setTask(initialState);
+    }
+  }
+
+  function deleteTask(index) {
+    const newlist = lisTasks.filter((item, i) => i !== index);
+    setLisTasks(newlist);
+  }
+
+  return (
+    <div className="fondo">
+      <h1 className="text-center pt-5 text-secondary display-1 newFont">
+        TO DO LIST
+      </h1>
+      {/*Input de Tareas*/}
+
+      <div className="container p-5 bg-primary-subtle">
+        <div className="input-group flex-nowrap">
+          <span className="input-group-text" id="addon-wrapping">
+            <i className="fa-regular fa-message"></i>
+          </span>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Add your task"
+            value={task.label}
+            aria-label="Username"
+            aria-describedby="addon-wrapping"
+            onChange={handleChange}
+            onKeyDown={saveTask}
+          />
+        </div>
+      </div>
+
+      {/*Card de lista de Tareas*/}
+
+      <div className="container">
+        <div className="card">
+          {lisTasks.length <= 0 ? (
+            <p className="text-center text-secondary newFont fw-bold">
+              No tienes tareas disponibles
+            </p>
+          ) : (
+            <p className="text-center text-secondary newFont fw-bold">{`Te faltan ${lisTasks.length} tareas por terminar`}</p>
+          )}
+          <ul className="list-group list-group-flush p-4 d-flex justify-content-between">
+            {lisTasks.map((item, index) => {
+              return (
+                <div className="d-flex align-items-center justify-content-between">
+                  <li className="list-group-item newFont w-100" key={index}>
+                    {item.label}
+                  </li>
+                  <div>
+                    <button type="button" onClick={() => deleteTask(index)}>
+                      <span>
+                        <i className="fa-solid fa-trash py-1"></i>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Home;
